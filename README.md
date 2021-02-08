@@ -2,11 +2,64 @@
 
 # Obtain data
 
-The assemblies were obtained using NCBI's Datasets tool. [Download it](https://www.ncbi.nlm.nih.gov/datasets/docs/command-line-start/) and make sure it's available in your path. I have renamed the executable from `datasets` to `ncbi-datasets`.
+The assemblies were obtained using NCBI's Datasets tool. [Download it](https://www.ncbi.nlm.nih.gov/datasets/docs/command-line-start/) and make sure it's available in your path. I have renamed the executable from `datasets` to `ncbi-datasets`. I am using version `10.21.0`.
 
-Obtain a `json file` with the information of all assemblies. Taxon `147537` corresponds to *Saccharomycotina*. The command after the pipe character will re-format the file to make it human-readable:
+
+Obtain a `json file` with the information of all assemblies. Taxon `147537` corresponds to [*Saccharomycotina*](https://www.ncbi.nlm.nih.gov/taxonomy/147537). The command after the pipe character will re-format the file to make it human-readable:
 ```
 ncbi-datasets summary genome taxon 147537 | python -m json.tool > saccharomycotina_2021-02-08.json
+```
+
+The `json file` now looks like this:
+```JSON
+{
+    "assemblies": [
+        {
+            "assembly": {
+                "annotation_metadata": {},
+                "assembly_accession": "GCA_001600815.1",
+                "assembly_category": "representative genome",
+                "assembly_level": "Scaffold",
+                "bioproject_lineages": [
+                    {
+                        "bioprojects": [
+                            {
+                                "accession": "PRJDB3734",
+                                "parent_accessions": [
+                                    "PRJDB3556"
+                                ],
+                                "title": "NBRP: Genome sequencing of Alloascoidea hylecoeti JCM 7604"
+                            },
+                            {
+                                "accession": "PRJDB3556",
+                                "title": "NBRP: Genome sequencing of eukaryotic microorganisms"
+                            }
+                        ]
+                    }
+                ],
+                "chromosomes": [
+                    "Un"
+                ],
+                "contig_n50": 224558,
+                "display_name": "JCM_7604_assembly_v001",
+                "estimated_size": "7801514",
+                "org": {
+                    "assembly_counts": {
+                        "node": 1,
+                        "subtree": 1
+                    },
+                    "key": "54196",
+                    "parent_tax_id": "1540230",
+                    "rank": "SPECIES",
+                    "sci_name": "Alloascoidea hylecoeti",
+                    "strain": "JCM 7604",
+                    "tax_id": "54196",
+                    "title": "Alloascoidea hylecoeti"
+                },
+                "seq_length": "24815695",
+                "submission_date": "2016-03-01"
+            }
+        },
 ```
 
 
