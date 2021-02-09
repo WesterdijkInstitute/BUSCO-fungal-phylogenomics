@@ -1,5 +1,15 @@
 # Saccharomycotina taxonomy
 
+# Preamble: conda environment
+
+We'll use a conda environment with the BUSCO software and its dependencies. First, [install conda](https://docs.conda.io/en/latest/miniconda.html). 
+
+The current guide to install BUSCO using conda are [here](https://busco.ezlab.org/busco_userguide.html#conda-package) but in this repository there is a file to install version 4 (which is what I used). To install this version, do:
+
+```
+conda env create --file busco4env.yml
+```
+
 # Obtain data
 
 The assemblies were obtained using NCBI's Datasets tool. [Download it](https://www.ncbi.nlm.nih.gov/datasets/docs/command-line-start/) and make sure it's available in your path. I have renamed the executable from `datasets` to `ncbi-datasets`. I am using version `10.21.0`.
@@ -61,6 +71,8 @@ The `json file` now looks like this:
             }
         },
 ```
+
+
 
 
 # Check busco results
