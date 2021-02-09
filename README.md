@@ -75,6 +75,7 @@ The `json file` now looks like this:
                 "submission_date": "2016-03-01"
             }
         },
+...
 ```
 
 # Download assemblies
@@ -83,7 +84,9 @@ Now we'll download each assembly listed in that file.
 
 * Script: `1_get_assemblies_from_json.py`
 * Input: the `json file`
-* Output: a set of zip files with the assemblies
+* Output: 
+  - a set of zip files with the assemblies
+  - a `metadata.tsv` file.
 * Usage:
 ```
 usage: 1_get_assemblies_from_json.py [-h] -j JSON [-t TRIES] [-o OUTPUTFOLDER]
@@ -102,6 +105,16 @@ optional arguments:
                         assemblies/)
   -n N                  Optional: Number of assemblies to download (in the
                         order of the JSON file)
+```
+
+If pointing to a previous output folder, the script will verify whether each file already exists (and can be opened). This allows easy updating of the assembly files.
+
+The `metadata.tsv` file contains formatted information from the `json file`:
+```
+GCA_001600815.1	54196	Alloascoidea hylecoeti	JCM 7604
+GCA_001600695.1	1301101	Ascoidea asiatica	JCM 7603
+GCF_001661345.1	1344418	Ascoidea rubescens DSM 1968	DSM 1968
+...
 ```
 
 
