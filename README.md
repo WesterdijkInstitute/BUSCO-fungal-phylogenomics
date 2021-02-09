@@ -109,7 +109,7 @@ optional arguments:
 
 If pointing to a previous output folder, the script will verify whether each file already exists (and can be opened). This allows easy updating of the assembly files.
 
-The `metadata.tsv` file contains formatted information from the `json file`:
+The `metadata.tsv` file contains formatted information from the `json file`, assembly accession, NCBI tax ID, species name and strain:
 ```
 GCA_001600815.1	54196	Alloascoidea hylecoeti	JCM 7604
 GCA_001600695.1	1301101	Ascoidea asiatica	JCM 7603
