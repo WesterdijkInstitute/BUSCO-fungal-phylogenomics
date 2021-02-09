@@ -10,7 +10,12 @@ The current guide to install BUSCO using conda are [here](https://busco.ezlab.or
 conda env create --file busco4env.yml
 ```
 
-# Obtain data
+We'll use that environment to run the rest of the scripts. Activate with
+```
+conda activate buscoenv
+```
+
+# Obtain information about available assemblies
 
 The assemblies were obtained using NCBI's Datasets tool. [Download it](https://www.ncbi.nlm.nih.gov/datasets/docs/command-line-start/) and make sure it's available in your path. I have renamed the executable from `datasets` to `ncbi-datasets`. I am using version `10.21.0`.
 
@@ -70,6 +75,33 @@ The `json file` now looks like this:
                 "submission_date": "2016-03-01"
             }
         },
+```
+
+# Download assemblies
+
+Now we'll download each assembly listed in that file.
+
+* Script: `1_get_assemblies_from_json.py`
+* Input: the `json file`
+* Output: a set of zip files with the assemblies
+* Usage:
+```
+usage: 1_get_assemblies_from_json.py [-h] -j JSON [-t TRIES] [-o OUTPUTFOLDER]
+                                     [-n N]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSON, --json JSON  JSON file downloaded with NCBI datasets with assembly
+                        data
+  -t TRIES, --tries TRIES
+                        Try this many times to get each accession file. If it
+                        still fails, a warning will be issued. Default: 3
+                        times
+  -o OUTPUTFOLDER, --outputfolder OUTPUTFOLDER
+                        Folder where the assemblies will be stored (default:
+                        assemblies/)
+  -n N                  Optional: Number of assemblies to download (in the
+                        order of the JSON file)
 ```
 
 
