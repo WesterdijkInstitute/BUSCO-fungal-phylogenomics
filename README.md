@@ -1,24 +1,33 @@
 # Saccharomycotina taxonomy
 
-# Preamble: conda environment
+# Preamble
 
 We'll use a conda environment with the BUSCO software and its dependencies. First, [install conda](https://docs.conda.io/en/latest/miniconda.html). 
 
-The current guide to install BUSCO using conda are [here](https://busco.ezlab.org/busco_userguide.html#conda-package) but in this repository there is a file to install version 4 (which is what I used). To install this version, do:
+The current guide to install BUSCO using conda are [here](https://busco.ezlab.org/busco_userguide.html#conda-package) but they are for the new version 5.0.
 
+Using conda:
+```
+conda create -n busco414 -c bioconda -c conda-forge busco=4.1.4 pandas
+```
+This also installs [Pandas](https://pandas.pydata.org/), which will be used later on.
+
+Another option is to use a `.yml` file included in this repository by doing 
 ```
 conda env create --file busco4env.yml
 ```
 
 We'll use that environment to run the rest of the scripts. Activate with
 ```
-conda activate buscoenv
+conda activate busco412
 ```
+
+We will also need a specific [BUSCO database](https://busco.ezlab.org/frames/fungi.htm). For this project, I used the [Ascomycota Odb10 set](https://busco-data.ezlab.org/v4/data/lineages/ascomycota_odb10.2019-11-20.tar.gz). Download and decompress.
+
 
 # Obtain information about available assemblies
 
 The assemblies were obtained using NCBI's Datasets tool. [Download it](https://www.ncbi.nlm.nih.gov/datasets/docs/command-line-start/) and make sure it's available in your path. I have renamed the executable from `datasets` to `ncbi-datasets`. I am using version `10.21.0`.
-
 
 Obtain a `json file` with the information of all assemblies. Taxon `147537` corresponds to [*Saccharomycotina*](https://www.ncbi.nlm.nih.gov/taxonomy/147537). The command after the pipe character will re-format the file to make it human-readable:
 ```
@@ -78,6 +87,7 @@ The `json file` now looks like this:
 ...
 ```
 
+
 # Download assemblies
 
 Now we'll download each assembly listed in that file.
@@ -109,7 +119,7 @@ optional arguments:
 
 If pointing to a previous output folder, the script will verify whether each file already exists (and can be opened). This allows easy updating of the assembly files.
 
-The `metadata.tsv` file contains formatted information from the `json file`, assembly accession, NCBI tax ID, species name and strain:
+The `metadata.tsv` file contains formatted information from the `json file`: assembly accession, NCBI tax ID, species name and strain:
 ```
 GCA_001600815.1	54196	Alloascoidea hylecoeti	JCM 7604
 GCA_001600695.1	1301101	Ascoidea asiatica	JCM 7603
@@ -117,6 +127,51 @@ GCF_001661345.1	1344418	Ascoidea rubescens DSM 1968	DSM 1968
 ...
 ```
 
+
+# Launch BUSCO on each assembly
+
+Next step will be to launch BUSCO on the assemblies contained on each zipped file. If a results folder is found (`[output folder]/[accession]`), the BUSCO analysis will be skipped for the corresponding assembly. 
+
+:warning: A BUSCO results folder could have been created but the run may have actually failed (e.g. user cancelled, lack of space, etc.). So be careful with this simply check when restarting the analysis!
+
+Internally, the script tries to read the assembly zip file and traverses its internal structure to find fasta files with the assembly's sequences. With the list of files, it launches a process that will join all the sequence files into one temporary file and use it as input for BUSCO. When done, it will compress the contents of three output folders within `[outputfolder]/[accession]/run_ascomycota_odb10`: `augustus_output`, `hmmer_output` and `busco_sequences`. The reason for this is that each of these subfolders contain thousands of small output files, which can create fragmentation issues for hard drives.
+
+:warning: Originally, I created a separate script to compress all results (when I started to have fragmentation issues). When I integrated some of this code into `2_launch_busco` to compress the results after the BUSCO run, it turned out that the zipping part was non-funcional due to differences in the Python versions used. I created a new environment with BUSCO 4.1.2, which includes a newer version of Python where zipping works. The BUSCO version I used originally was **4.0.6** but as far as I can see, no significant changes were made to the algorithm (just [bugfixes](https://gitlab.com/ezlab/busco/-/blob/master/CHANGELOG)).
+
+* Script: `2_launch_busco.py`
+* Input: folder with zipped assemblies, path to folder with BUSCO database
+* Optional input: 
+  - A file with assembly accessions to be re-analyzed in case they have a results folder already
+  - A file with assembly accessions to filter input. If used, only the accessions on the input folder that match these accessions will be analyzed.
+* Output: 
+  - A folder with BUSCO results
+* Parameters for BUSCO command: `--mode genome --lineage_dataset [path to ascomycota_odb10] --augustus_species saccharomyces_cerevisiae_S288C`
+* Usage:
+```
+usage: 2_launch_busco.py [-h] -i INPUTFOLDER [-o OUTPUTFOLDER] -d DBFOLDER
+                         [--re_analyze_file RE_ANALYZE_FILE]
+                         [--filter_list FILTER_LIST] [-c CPUS] [-p PROCESSES]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUTFOLDER, --inputfolder INPUTFOLDER
+                        Folder with zipped assemblies
+  -o OUTPUTFOLDER, --outputfolder OUTPUTFOLDER
+                        Folder with BUSCO results (Default: 'Busco_results')
+  -d DBFOLDER, --dbfolder DBFOLDER
+                        Folder with a BUSCO database
+  --re_analyze_file RE_ANALYZE_FILE
+                        A file containing 1-assembly accession per line. Those
+                        assemblies will be re-analized
+  --filter_list FILTER_LIST
+                        Read a txt file with one-GCA per line. Only analyze
+                        GCAs from inputfolder that appear in this list
+  -c CPUS, --cpus CPUS  Number of cpus to pass to BUSCO (default: all
+                        available)
+  -p PROCESSES, --processes PROCESSES
+                        Number of BUSCO processes to launch simultaneously.
+                        Default: 2
+```
 
 
 
