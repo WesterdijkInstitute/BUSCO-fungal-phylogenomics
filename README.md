@@ -8,13 +8,13 @@ The current guide to install BUSCO using conda are [here](https://busco.ezlab.or
 
 Using conda:
 ```
-conda create -n busco414 -c bioconda -c conda-forge busco=4.1.4 pandas
+conda create -n busco406 -c bioconda -c conda-forge busco=4.0.6 biopython=1.77 python>=3.7 pandas
 ```
 This also installs [Pandas](https://pandas.pydata.org/), which will be used later on.
 
-Another option is to use a `.yml` file included in this repository by doing 
+Another (easier) option is to use a `.yml` file included in this repository by doing 
 ```
-conda env create --file busco4env.yml
+conda env create --file busco406.yml
 ```
 
 We'll use that environment to run the rest of the scripts. Activate with
