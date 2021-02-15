@@ -127,6 +127,8 @@ GCF_001661345.1	1344418	Ascoidea rubescens DSM 1968	DSM 1968
 ...
 ```
 
+The `metadata` file for the latest results is [here](./files/metadata_2021-01.tsv).
+
 
 # Launch BUSCO on each assembly
 
@@ -136,7 +138,7 @@ Next step will be to launch BUSCO on the assemblies contained on each zipped fil
 
 Internally, the script tries to read the assembly zip file and traverses its internal structure to find fasta files with the assembly's sequences. With the list of files, it launches a process that will join all the sequence files into one temporary file and use it as input for BUSCO. When done, it will compress the contents of three output folders within `[outputfolder]/[accession]/run_ascomycota_odb10`: `augustus_output`, `hmmer_output` and `busco_sequences`. The reason for this is that each of these subfolders contain thousands of small output files, which can create fragmentation issues for hard drives.
 
-:warning: Originally, I created a separate script to compress all results (when I started to have fragmentation issues). When I integrated some of this code into `2_launch_busco` to compress the results after the BUSCO run, it turned out that the zipping part was non-funcional due to differences in the Python versions used. I created a new environment with BUSCO 4.1.2, which includes a newer version of Python where zipping works. The BUSCO version I used originally was **4.0.6** but as far as I can see, no significant changes were made to the algorithm (just [bugfixes](https://gitlab.com/ezlab/busco/-/blob/master/CHANGELOG)).
+:warning: Originally, I created a separate script to compress all results (when I started to have fragmentation issues). When I integrated some of this code into `2_launch_busco` to compress the results after the BUSCO run, it turned out that the zipping part was non-funcional due to differences in the Python versions used. I created a new environment keeping the same BUSCO version, but a newer Python version. I have tested this new environment on a random assembly and it works.
 
 * Script: `2_launch_busco.py`
 * Input: folder with zipped assemblies, path to folder with BUSCO database
