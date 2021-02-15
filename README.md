@@ -175,11 +175,34 @@ optional arguments:
                         Default: 2
 ```
 
+Each BUSCO result folder will contain a subfolder with data specific to the database used (in this case, `ascomycota_odb10`). Inside this foler, a small file contains a summary of the results (`[outputfolder]/[accession]/run_ascomycota_odb10/short_summary.txt`). For example, for assembly `GCA_001600695.1`, the `short_summary` file includes de following:
+```
+	C:81.7%[S:79.2%,D:2.5%],F:0.6%,M:17.7%,n:1706
+	1395	Complete BUSCOs (C)
+	1352	Complete and single-copy BUSCOs (S)
+	43	Complete and duplicated BUSCOs (D)
+	10	Fragmented BUSCOs (F)
+	301	Missing BUSCOs (M)
+	1706	Total BUSCO groups searched
+```
+
+:warning::warning::warning: When writing this guide, I tried versions 4.1.4 (when dealing with the compression issue) and 5 of BUSCO. BUSCO v5.0.0 uses another default method to find genes ([MetaEuk](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-020-00808-x) instead of Augustus), so I expected differences. What I didn't expect were differences with v4.1.4. With the same test assembly as above, these are the `Missing BUSCOs (M)`:
+
+```
+BUSCO 4.1.4:
+	751	Missing BUSCOs (M)
+	
+BUSCO 5.0.0:
+	243	Missing BUSCOs (M)
+```
+As can be seen, v4.1.4 misses a lot of BUSCO hits while v5.0.0 looks better. I will continue to work with the v4.0.6 results but will try to make a full v5.0.0 run in the new server. BUSCO's [changelog](https://gitlab.com/ezlab/busco/-/blob/master/CHANGELOG) doesn't mention any breaking changes (only bug fixes), so it's difficult to say why this version seems to perform much worse than v4.0.6.
 
 
-# Check busco results
+# Verify BUSCO results
 
-* Script: `check_busco_results.py`. Performs a quick check comparing the numbers reported in each BUSCO results folder 'short_summary' file against the actual number of files with sequences.
+The next script reads the `short_summary` files and compares the number of singe-copy BUSCOs (S) reported there with the actual number of files. It also produces a report of all summaries, [`busco_set_results_summary`](./files/busco_set_results_summary.tsv).
+
+* Script: `3_verify_busco_results.py`
 * Input:
   - Folder with all BUSCO results
   - Tab-separated `metadata file`
