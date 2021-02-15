@@ -207,8 +207,24 @@ The next script reads the `short_summary` files and compares the number of singe
   - Folder with all BUSCO results
   - Tab-separated `metadata file`
 * Output:
-  - `busco_set_results_summary.tsv`. Example:
+  - `busco_set_results_summary.tsv`.
+* Usage
+```
+usage: 3_verify_busco_results.py [-h] -b BUSCOFOLDERS [-m METADATA]
 
+optional arguments:
+  -h, --help            show this help message and exit
+  -b BUSCOFOLDERS, --buscofolders BUSCOFOLDERS
+                        Path to folder with busco results (each result is a
+                        subfolder)
+  -m METADATA, --metadata METADATA
+                        A tab-separated file in which first column is the
+                        assembly name, third column is the species name, and
+                        fourth column is the strain name. Will be used to
+                        annotate summary file (Optional).
+```
+
+Example of the `busco_set_results_summary` file:
 ```
 Assembly	[C]omplete BUSCOs	Complete and [S]ingle-copy BUSCOs	Complete and [D]uplicated BUSCOs	[F]ragmented BUSCOs	[M]issing BUSCOs	Name
 GCA_000002515.1	1610	1607	3	6	90	Kluyveromyces lactis NRRL Y-1140
@@ -216,3 +232,21 @@ GCA_000002525.1	1583	1575	8	5	118	Yarrowia lipolytica CLIB122 CLIB122
 GCA_000002545.2	1601	1563	38	4	101	[Candida] glabrata CBS 138
 ```
 
+
+# Make an absence/presence matrix of all BUSCO results
+
+With the BUSCO results per assembly, we want to evaluate which of these genes are present in all (or most) assemblies. For this we will build a presence/absence matrix of all BUSCO results (only complete and single copy hits).
+
+* Script: `4_make_busco_a-p_matrix.py`
+* Input: a path to the folder with all BUSCO results
+* Output: a presence/absence matrix (rows: assemblies; columns: BUSCOs) in tsv format
+* Usage:
+```
+usage: 4_make_busco_a-p_matrix.py [-h] -i INPUTFOLDER
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUTFOLDER, --inputfolder INPUTFOLDER
+                        Path to folder with busco results (each result is a
+                        subfolder)
+```
