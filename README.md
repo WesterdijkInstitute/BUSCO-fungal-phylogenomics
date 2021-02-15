@@ -197,6 +197,11 @@ BUSCO 5.0.0:
 ```
 As can be seen, v4.1.4 misses a lot of BUSCO hits while v5.0.0 looks better. I will continue to work with the v4.0.6 results but will try to make a full v5.0.0 run in the new server. BUSCO's [changelog](https://gitlab.com/ezlab/busco/-/blob/master/CHANGELOG) doesn't mention any breaking changes (only bug fixes), so it's difficult to say why this version seems to perform much worse than v4.0.6.
 
+Three assemblies had issues and could not be processed
+- GCA_009666835.1
+- GCA_015345625.1
+- GCA_015345745.1
+
 
 # Verify BUSCO results
 
