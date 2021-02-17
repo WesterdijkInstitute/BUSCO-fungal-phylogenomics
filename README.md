@@ -244,7 +244,7 @@ With the BUSCO results per assembly, we want to evaluate which of these genes ar
 
 * Script: `4_make_busco_a-p_matrix.py`
 * Input: a path to the folder with all BUSCO results
-* Output: a presence/absence matrix (rows: assemblies; columns: BUSCOs) in tsv format
+* Output: an `a/p matrix` (rows: assemblies; columns: BUSCOs) in tsv format
 * Usage:
 ```
 usage: 4_make_busco_a-p_matrix.py [-h] -i INPUTFOLDER
@@ -255,3 +255,47 @@ optional arguments:
                         Path to folder with busco results (each result is a
                         subfolder)
 ```
+
+
+# Analyze the absence/presence matrix
+
+As a simple strategy to analyze the whole BUSCO results, we'll analyze the absence/presence matrix using the "completeness" of each assembly.
+
+In the first stage, the assemblies will be analyzed. Only the assemblies that contain at least a desired number of BUSCO hits in the `Complete and single-copy BUSCOs (S)` category will be used downstream. This completeness threshold is `0.7` by default (1,194/1,706 BUSCO hits for the `ascomycota_odb10` database).
+
+A second stage analyzes the BUSCOs in that filtered set of assemblies. Currently, the script reports lists of genes that are found in 100%, 95% and 90% of (filtered) assemblies.
+
+
+* Script: `5_analyze_matrix.py`
+* Input: 
+  - The `a/p matrix`
+  - Optional: the `links_to_ODB10.txt` file, part of the `ascomycota_odb10` contents.
+  - Optional: the `metadata.tsv` file.
+  - Threshold of completeness to filter assemblies.
+* Output:
+  - The list of assemblies that have the requested number of BUSCOs. They will be annotated if the `metadata.tsv` file was used.
+  - Lists of genes for different levels of presence in the filtered assemblies. They will be annotated if the `links_to_ODB10.txt` file was used.
+* Usage:
+```
+usage: 5_analyze_matrix.py [-h] -m MATRIX [-l LINKS] [--metadata METADATA]
+                           [-t THRESHOLD]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -m MATRIX, --matrix MATRIX
+                        Path to tsv busco a/p matrix
+  -l LINKS, --links LINKS
+                        Path to 'links_to_ODB10.txt' file, which contains
+                        information about the BUSCO genes. It will be used for
+                        the gene report. Optional
+  --metadata METADATA   Path to 'metadata.tsv' file, which contains
+                        information about the assembly set. It will be used
+                        for the assembly report. Optional
+  -t THRESHOLD, --threshold THRESHOLD
+                        A number between 0 and 1 representing the percentage
+                        of Busco completeness (relative to the number of total
+                        Busco hits in the set) necessary to pass to downstream
+                        analysis. Assemblies below this number will also be
+                        reported. Default: 0.7
+```
+
