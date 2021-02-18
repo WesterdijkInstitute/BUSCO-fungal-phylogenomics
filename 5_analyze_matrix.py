@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 """
-Reads back the report created in previous script and makes analysis
+Reads back the matrix created in previous script and filters assemblies and BUSCOs
 """
 
 import sys
@@ -10,6 +10,7 @@ import argparse
 from pathlib import Path
 import pandas as pd
 
+
 def arg_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--matrix", help="Path to tsv busco a/p matrix",
@@ -17,9 +18,9 @@ def arg_parser():
     parser.add_argument("-l", "--links", help="Path to 'links_to_ODB10.txt' \
         file, which contains information about the BUSCO genes. It will be \
         used for the gene report. Optional", type=Path)
-    parser.add_argument("--metadata", help="Path to 'metadata.tsv' file, \
+    parser.add_argument("-s", "--summary", help="Path to the summary .tsv file, \
         which contains information about the assembly set. It will be used \
-        for the assembly report. Optional", type=Path)
+        for the assembly reports. Optional", type=Path)    
     parser.add_argument("-t", "--threshold", help="A number between 0 and 1 \
         representing the percentage of Busco completeness (relative to the \
         number of total Busco hits in the set) necessary to pass to downstream \
@@ -47,8 +48,10 @@ if __name__ == "__main__":
                 gene_info[x[0]] = "{}\t{}".format(x[1], x[2])
                 
     asm_info = dict()
-    if args.metadata:
-        with open(args.metadata) as f:
+    # expects the following header
+    report_header = "Assembly\t[C]omplete BUSCOs\tComplete and [S]ingle-copy BUSCOs\tComplete and [D]uplicated BUSCOs\t[F]ragmented BUSCOs\t[M]issing BUSCOs\tName\n"
+    if args.summary:
+        with open(args.summary) as f:
             for line in f:
                 x = line.strip().split("\t")
                 asm_info[x[0]] = "\t".join(x[1:])
@@ -74,17 +77,21 @@ if __name__ == "__main__":
     
     # Report underperforming assemblies. Can be used with the launch_busco script to try to re-analyze
     discarded_bh = bh[~x]
-    with open("busco_set_a-p_report_assemblies_below_threshold.txt", "w") as f:
-        f.write("\n".join(discarded_bh.index))
+    with open("matrix_analysis_Bottom_{:04.2f}_Assemblies.tsv".format(1-t), "w") as f:
+        f.write(report_header)
+        for asm in discarded_bh.index:
+            f.write("{}\t{}\n".format(asm, asm_info.get(asm, "\t\t\t\t\t")))
+        #f.write("\n".join(discarded_bh.index))
     
     
     # proceed with filtered data frame. Which genes are present in all assemblies?
     busco_sharedness = filtered_bh.iloc[:,:-1].all(axis=0) # creates a True/False series. Leave out "Completeness" column
     shared_by_all = filtered_bh.iloc[:, :-1].columns[busco_sharedness] # data series of busco ids shared by all assemblies
     # instead of the following, report genes for various presence (enrichment?) levels
-    with open("matrix_analysis_good_Assemblies.txt", "w") as f:
+    with open("matrix_analysis_Top_{:04.2f}_Assemblies.tsv".format(t), "w") as f:
         for asm in filtered_bh.index:
-            f.write("{}\t{}\n".format(asm, asm_info.get(asm, "\t\t")))
+            f.write(report_header)
+            f.write("{}\t{}\n".format(asm, asm_info.get(asm, "\t\t\t\t\t")))
     print("{}/{} busco genes are present in all remaining assemblies".format(len(shared_by_all), \
         len(bh.columns)-1)) # "-1" because we have extra "Completeness" extra column
     
@@ -104,7 +111,7 @@ if __name__ == "__main__":
         genes = filtered_bh.columns[:-1][hits_presence_bool]
         print("{}\t{}\t{}".format(asm_perc, asms, len(genes)))
         
-        with open("matrix_analysis_S_genes_in_{}_of_good_assemblies".format(asm_perc), "w") as f:
+        with open("matrix_analysis_S_genes_in_{:04.2f}_of_Top_{:04.2f}_assemblies.tsv".format(asm_perc, t), "w") as f:
             for g in genes:
                 f.write("{}\t{}\n".format(g, gene_info.get(g, "\t")))
         
