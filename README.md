@@ -270,14 +270,15 @@ A second stage analyzes the BUSCOs in that filtered set of assemblies. Currently
 * Input: 
   - The `a/p matrix`
   - Optional: the `links_to_ODB10.txt` file, part of the `ascomycota_odb10` contents.
-  - Optional: the `metadata.tsv` file.
+  - Optional: the `busco_set_results_summary.tsv` file from script 3.
   - Threshold of completeness to filter assemblies.
 * Output:
-  - The list of assemblies that have the requested number of BUSCOs. They will be annotated if the `metadata.tsv` file was used.
+  - The list of assemblies that have the requested number of BUSCOs ("Top Assemblies"). They will be annotated if the `busco_set_results_summary.tsv` file was used.
+  - The list of assemblies that did not contain the requested number of (S) BUSCOs ("Bottom Assemblies")
   - Lists of genes for different levels of presence in the filtered assemblies. They will be annotated if the `links_to_ODB10.txt` file was used.
 * Usage:
 ```
-usage: 5_analyze_matrix.py [-h] -m MATRIX [-l LINKS] [--metadata METADATA]
+usage: 5_analyze_matrix.py [-h] -m MATRIX [-l LINKS] [-s SUMMARY]
                            [-t THRESHOLD]
 
 optional arguments:
@@ -288,9 +289,10 @@ optional arguments:
                         Path to 'links_to_ODB10.txt' file, which contains
                         information about the BUSCO genes. It will be used for
                         the gene report. Optional
-  --metadata METADATA   Path to 'metadata.tsv' file, which contains
+  -s SUMMARY, --summary SUMMARY
+                        Path to the summary .tsv file, which contains
                         information about the assembly set. It will be used
-                        for the assembly report. Optional
+                        for the assembly reports. Optional
   -t THRESHOLD, --threshold THRESHOLD
                         A number between 0 and 1 representing the percentage
                         of Busco completeness (relative to the number of total
@@ -299,3 +301,38 @@ optional arguments:
                         reported. Default: 0.7
 ```
 
+For example, for the default top `0.7` assemblies, 14 BUSCOs were found in all those assemblies.
+
+
+# Obtain the sequence of all BUSCOs
+
+With the list of `Top Assemblies` and enriched BUSCOs, the following script will read all the (zipped) BUSCO results to extract the (DNA or AA) sequences into unaligned fasta files for each BUSCO.
+
+If a sequence is not found in any results folder, the script currently inserts an empty sequence in the file (i.e. only its header)
+
+* Script: `6_assemble_unaligned_TargetGenes.py.py`
+* Input: 
+  - The base BUSCO results folder
+  - A list of assemblies. For example, `matrix_analysis_Top_0.70_Assemblies.tsv`
+  - A list of BUSCOs. For example, `matrix_analysis_S_genes_in_1.00_of_Top_0.70_assemblies.tsv`
+* Output:
+  - Fasta files for each BUSCO
+* Usage:
+```
+usage: 6_assemble_unaligned_TargetGenes.py [-h] -r RESULTS -a ASSEMBLIES -t
+                                           TARGETGENES [-o OUTPUTFOLDER]
+                                           [--aa]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r RESULTS, --results RESULTS
+                        Base path with BUSCO results
+  -a ASSEMBLIES, --assemblies ASSEMBLIES
+                        List of assemblies from which to extract the sequences
+  -t TARGETGENES, --targetgenes TARGETGENES
+                        List of Target Genes
+  -o OUTPUTFOLDER, --outputfolder OUTPUTFOLDER
+                        Folder with unaligned sequence file. Default:
+                        ./output/Target_Genes_unaligned
+  --aa                  Extract protein sequences instead of DNA
+```
