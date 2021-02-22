@@ -19,7 +19,7 @@ conda env create --file busco406.yml
 
 We'll use that environment to run the rest of the scripts. Activate with
 ```
-conda activate busco412
+conda activate busco406
 ```
 
 We will also need a specific [BUSCO database](https://busco.ezlab.org/frames/fungi.htm). For this project, I used the [Ascomycota Odb10 set](https://busco-data.ezlab.org/v4/data/lineages/ascomycota_odb10.2019-11-20.tar.gz). Download and decompress.
