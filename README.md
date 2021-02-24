@@ -24,6 +24,10 @@ conda activate busco406
 
 We will also need a specific [BUSCO database](https://busco.ezlab.org/frames/fungi.htm). For this project, I used the [Ascomycota Odb10 set](https://busco-data.ezlab.org/v4/data/lineages/ascomycota_odb10.2019-11-20.tar.gz). Download and decompress.
 
+For the latter part of the project, another environment will be used, containing `MAFFT`, `trimal` and `IQ-Tree` (these could in theory be included in the `busco406` environment but it's already difficult for conda to solve all those dependencies):
+```
+conda create -n phylogeny -c bioconda mafft trimal iqtree python=3
+```
 
 # Obtain information about available assemblies
 
