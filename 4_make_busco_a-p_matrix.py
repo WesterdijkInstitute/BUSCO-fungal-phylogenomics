@@ -16,6 +16,9 @@ def arg_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--inputfolder", help="Path to folder with busco\
         results (each result is a subfolder)", required=True, type=Path)
+    parser.add_argument("-f", "--filter_list", help="Optional. File with list \
+        of assemblies. Only the assemblies from the input folder that are in \
+        this list will be processed (it can be a tab-separated file)", type=Path)
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -24,6 +27,16 @@ if __name__ == "__main__":
     i = args.inputfolder
     if not i.is_dir():
         sys.exit("Error: given input folder not a folder")
+        
+    filter_list = set()
+    if args.filter_list:
+        try:
+            with open(args.filter_list) as f:
+                for line in f:
+                    filter_list.add(line.split("\t")[0].strip())
+            print("Option --filter_list used. Got {} assembly accessions".format(len(filter_list)))
+        except IOError:
+            sys.exit("Error: --filter_list used, but cannot open file")
     
     # Create a pandas data frame to store all the single copy busco hits
     all_busco_hits = set()
@@ -34,6 +47,10 @@ if __name__ == "__main__":
             continue
         
         assembly = folder.parts[-1]
+        
+        if filter_list:
+            if assembly not in filter_list:
+                continue
         
         # place with fasta files
         target_folder = folder / "run_ascomycota_odb10/busco_sequences/single_copy_busco_sequences/"
@@ -62,7 +79,7 @@ if __name__ == "__main__":
     for assembly, hits_set in data.items():
         for hit in hits_set:
             busco_table.loc[assembly, hit] = True
-    print(busco_table.head())    
+    #print(busco_table.head())    
     
     # Finalize. 
     print("Checked {} result folders".format(num+1))

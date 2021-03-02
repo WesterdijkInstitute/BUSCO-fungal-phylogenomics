@@ -251,13 +251,18 @@ With the BUSCO results per assembly, we want to evaluate which of these genes ar
 * Output: an `a/p matrix` (rows: assemblies; columns: BUSCOs) in tsv format
 * Usage:
 ```
-usage: 4_make_busco_a-p_matrix.py [-h] -i INPUTFOLDER
+usage: 4_make_busco_a-p_matrix.py [-h] -i INPUTFOLDER [-f FILTER_LIST]
 
 optional arguments:
   -h, --help            show this help message and exit
   -i INPUTFOLDER, --inputfolder INPUTFOLDER
                         Path to folder with busco results (each result is a
                         subfolder)
+  -f FILTER_LIST, --filter_list FILTER_LIST
+                        Optional. File with list of assemblies. Only the
+                        assemblies from the input folder that are in this list
+                        will be processed (it can be a tab-separated file)
+
 ```
 
 
