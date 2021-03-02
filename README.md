@@ -340,3 +340,30 @@ optional arguments:
                         ./output/Target_Genes_unaligned
   --aa                  Extract protein sequences instead of DNA
 ```
+
+
+# Multiple sequence alignment
+
+With the set of sequence files, the following script will launch `MAFFT` on each file. `Trimal` will be used to trim each alignment file (using option `-gappyout`). The `phylogeny` environment (see first section) will be used here:
+
+* Script: `7_align_Target_Genes.py`
+* Input: a folder with fasta files (can be nucloetide or amino acid)
+* Output: 
+  - A folder with the aligned versions of the fasta files in the input
+  - A folder with the trimmed versions of each aligned file
+* Usage:
+```
+usage: 7_align_Target_Genes.py [-h] -i INPUTFOLDER -a ALIGNEDFOLDER -t TRIMMEDFOLDER [-p PROCESSES] [--threads THREADS]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUTFOLDER, --inputfolder INPUTFOLDER
+                        Folder with unaligned .fasta files
+  -a ALIGNEDFOLDER, --alignedfolder ALIGNEDFOLDER
+                        Folder for aligned sequence files.
+  -t TRIMMEDFOLDER, --trimmedfolder TRIMMEDFOLDER
+                        Folder for trimmed aligned sequence files (using command 'trimal -gappyout')
+  -p PROCESSES, --processes PROCESSES
+                        Number of MAFFT instances. Default: 1
+  --threads THREADS     --threads parameter for each MAFFT process. Default: 2
+```
