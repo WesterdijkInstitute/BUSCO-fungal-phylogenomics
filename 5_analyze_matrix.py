@@ -89,8 +89,8 @@ if __name__ == "__main__":
     shared_by_all = filtered_bh.iloc[:, :-1].columns[busco_sharedness] # data series of busco ids shared by all assemblies
     # instead of the following, report genes for various presence (enrichment?) levels
     with open("matrix_analysis_Top_{:04.2f}_Assemblies.tsv".format(t), "w") as f:
+        f.write(report_header)
         for asm in filtered_bh.index:
-            f.write(report_header)
             f.write("{}\t{}\n".format(asm, asm_info.get(asm, "\t\t\t\t\t")))
     print("{}/{} busco genes are present in all remaining assemblies".format(len(shared_by_all), \
         len(bh.columns)-1)) # "-1" because we have extra "Completeness" extra column
