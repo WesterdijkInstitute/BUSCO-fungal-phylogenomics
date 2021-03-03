@@ -62,8 +62,12 @@ if __name__ == "__main__":
                 target_zip = folder / "run_ascomycota_odb10/busco_sequences.zip"
                 with ZipFile(target_zip) as z:
                     for x in z.namelist():
-                        if x[-3:] == "fna":
-                            scbs_set.add(Path(x).stem)
+                        xpath = Path(x)
+                        # only get complete single_copy_busco_sequences                        
+                        if xpath.parts[1] != "single_copy_busco_sequences":
+                            continue
+                        if xpath.suffix == ".fna":
+                            scbs_set.add(xpath.stem)
             except:
                 sys.exit("Error with target folder {}".format(target_folder))
         else:
