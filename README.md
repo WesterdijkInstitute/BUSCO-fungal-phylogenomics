@@ -347,7 +347,7 @@ optional arguments:
 ```
 
 
-# Multiple sequence alignment
+# Multiple sequence alignment and curation
 
 With the set of sequence files, the following script will launch `MAFFT` on each file. `Trimal` will be used to trim each alignment file (using option `-gappyout`). The `phylogeny` environment (see first section) will be used here:
 
@@ -372,3 +372,32 @@ optional arguments:
                         Number of MAFFT instances. Default: 1
   --threads THREADS     --threads parameter for each MAFFT process. Default: 2
 ```
+
+
+# Concatenate alignments
+
+The last script before launching IQ-Tree reads the set of aligned and curated files from the previous steps and concatenates their sequences, producing also the required partition file.
+
+* Script: `8_concatenate_alignments.py`
+* Input: a folder with all curated alignments
+* Output:
+  - A concatenated sequence file. 
+  - A nexus partition file
+```
+usage: 8_concatenate_alignments.py [-h] -i INPUTFOLDER -n NAME
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUTFOLDER, --inputfolder INPUTFOLDER
+                        Folder with aligned sequences
+  -n NAME, --name NAME  Base name for the output
+```
+
+
+# Use IQ-Tree
+
+Use the previous files for the phylogenomic analysis. There are many options for IQ-Tree. E.g.:
+```
+iqtree -s [concatenated].fasta -p [partition].nex -T AUTO -B 1000 --msub nuclear -m MFP
+```
+Instead of the ultrafase bootstrap, we can substitute `-B 1000` with `--fast`. The `-m MFP` will use the "new ModelFinder" which will try to find the most appropriate substitution model for each partition, out of the models designed for sequences localized in the nuclear genome (option `--msub nuclear`)
