@@ -40,7 +40,7 @@ def read_list(filepath):
     try:
         with open(filepath) as f:
             for line in f:
-                if line[0] == "#" or line.strip() == "":
+                if line[0] == "#" or line.strip() == "" or line.startswith("Assembly"):
                     continue
                 rset.add(line.strip().split("\t")[0])
     except IOError:
@@ -94,6 +94,7 @@ if __name__ == "__main__":
             not_found.add(asm)
     if not_found:
         print("Not found: {} BUSCO 'busco_sequences' zip".format(len(not_found)))
+        sys.exit(", ".join(not_found))
     
     for gene in TargetGenes:
         with open(o / "{}.{}.fasta".format(gene, file_type), "w") as f:

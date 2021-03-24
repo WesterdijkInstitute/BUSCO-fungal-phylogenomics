@@ -63,13 +63,15 @@ if __name__ == "__main__":
                 with ZipFile(target_zip) as z:
                     for x in z.namelist():
                         xpath = Path(x)
-                        # only get complete single_copy_busco_sequences                        
+                        # only get complete single_copy_busco_sequences
+                        if len(xpath.parts) < 2:
+                            continue
                         if xpath.parts[1] != "single_copy_busco_sequences":
                             continue
                         if xpath.suffix == ".fna":
                             scbs_set.add(xpath.stem)
             except:
-                sys.exit("Error with target folder {}".format(target_folder))
+                sys.exit("Error with zip file {}".format(target_zip))
         else:
             scbs_set = set([fasta_file.stem for fasta_file in target_folder.glob("*.fna")])
             
