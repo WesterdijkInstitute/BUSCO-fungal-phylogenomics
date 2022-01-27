@@ -36,6 +36,8 @@ def command_parser():
                         type=Path, default=(Path(__file__).parent/"assemblies"))
     parser.add_argument("-n", help="Optional: only download the first 'n' \
                         assemblies (in the order of the JSON file)", type=int)
+    parser.add_argument("--includelist", type=Path, help="If present, only \
+                        download accessions from this list")
     parser.add_argument("--skiplist", type=Path, help="If present, use this \
                         list of accessions to be skipped during the downloading")
 
@@ -93,6 +95,11 @@ if __name__ == "__main__":
             skip_set = set(x.strip() for x in f.readlines())
     skip_set_no_version = {x.split(".")[0]: x for x in skip_set}
 
+    include_set = set()
+    if options.includelist:
+        with open(options.includelist) as f:
+            include_set = set(x.strip() for x in f.readlines())
+
     accession_metadata_summary = list()
     with open(json_file) as f, open(o / "updated_assemblies.tsv", "w") as u:
         j = json.load(f)
@@ -110,6 +117,11 @@ if __name__ == "__main__":
             strain = org.get("strain", "")
             tax_id = org.get("tax_id", "")
 
+            # only download accessions from include_set (if present)
+            if include_set and asm_ac not in include_set:
+                continue
+
+            # skip accessions if they're in skip_set
             if asm_ac in skip_set:
                 continue
             # check no. 2: see if we had a previous version of the assembly
