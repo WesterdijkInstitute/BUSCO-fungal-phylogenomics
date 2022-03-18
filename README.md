@@ -412,3 +412,7 @@ If running first with `--fast` to have a first view of the tree, the resulting s
 ## Alternative software
 
 A similar project doing a similar analysis is [here](https://github.com/jamiemcg/BUSCO_phylogenomics)
+
+## Author
+
+[https://github.com/jorgecnavarrom](https://github.com/jorgecnavarrom)
