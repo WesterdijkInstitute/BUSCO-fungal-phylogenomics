@@ -53,7 +53,11 @@ if __name__ == "__main__":
                 continue
         
         # place with fasta files
-        target_folder = folder / "run_ascomycota_odb10/busco_sequences/single_copy_busco_sequences/"
+        rfs = list(folder.glob("run_*"))
+        assert(len(rfs) == 1)
+        run_folder = rfs[0]
+
+        target_folder = run_folder / "busco_sequences/single_copy_busco_sequences/"
         
         if not target_folder.is_dir():
             # try to see if results have been zipped
@@ -73,7 +77,7 @@ if __name__ == "__main__":
             except:
                 sys.exit("Error with zip file {}".format(target_zip))
         else:
-            scbs_set = set([fasta_file.stem for fasta_file in target_folder.glob("*.fna")])
+            scbs_set = set([fasta_file.stem for fasta_file in target_folder.glob("*.faa")])
             
         data[assembly] = scbs_set
         all_busco_hits.update(scbs_set)
