@@ -75,27 +75,49 @@ if __name__ == "__main__":
             continue
         
         assembly = folder.parts[-1]
+
+        for runfolder in folder.glob("*"):
+            if not runfolder.is_dir():
+                continue
+            if not runfolder.parts[-1].startswith("run_"):
+                continue
+            else:
+                break
+        assert(runfolder.parts[-1].startswith("run_"))
+        print(runfolder)
         
         # place with summary
-        summary_file = folder / "run_ascomycota_odb10/short_summary.txt"
-        if not summary_file.is_file():
+        summary_file = None
+        for item in runfolder.glob("*"):
+            # print(item.name)
+            if item.name == "short_summary.txt":
+                summary_file = item
+                break
+
+        if summary_file is None:
             print("Warning: Can't find summary file for assembly {}".format(assembly))
             continue
         with open(summary_file) as f:
             lines = f.readlines()
-            C = int(lines[8].strip().split("\t")[0])
-            S = int(lines[9].strip().split("\t")[0])
-            D = int(lines[10].strip().split("\t")[0])
-            F = int(lines[11].strip().split("\t")[0])
-            M = int(lines[12].strip().split("\t")[0])
+            # NOTE: In BUSCO 4, line with "Complete BUSCOs" is 9, but for
+            # BUSCO 5, it's line 10!
+            for n, l in enumerate(lines):
+                if l.strip().endswith("Complete BUSCOs (C)"):
+                    C = int(l.strip().split("\t")[0])
+                    break
+            S = int(lines[n+1].strip().split("\t")[0])
+            D = int(lines[n+2].strip().split("\t")[0])
+            F = int(lines[n+3].strip().split("\t")[0])
+            M = int(lines[n+4].strip().split("\t")[0])
+            
             summary[assembly] = [C, S, D, F, M]
         
         # place with fasta files
-        target_folder = folder / "run_ascomycota_odb10/busco_sequences/single_copy_busco_sequences/"
+        target_folder = runfolder / "busco_sequences/single_copy_busco_sequences/"
         if not target_folder.is_dir():
             # try to see if results where zipped            
             try:
-                target_zip = folder / "run_ascomycota_odb10/busco_sequences.zip"
+                target_zip = runfolder / "busco_sequences.zip"
                 fnas = set()
                 faas = set()
                 with ZipFile(target_zip) as z:
@@ -116,11 +138,11 @@ if __name__ == "__main__":
             fnas = set([fasta_file.stem for fasta_file in target_folder.glob("*.fna")])
             faas = set([fasta_file.stem for fasta_file in target_folder.glob("*.faa")])
             
-        if len(fnas) != len(faas):
-            print("Warning! BUSCO results for {} have different number of fna and faa files ({}, {})".format(assembly, len(fnas), len(faas)))
+        #if len(fnas) != len(faas):
+            #print("Warning! BUSCO results for {} have different number of fna and faa files ({}, {})".format(assembly, len(fnas), len(faas)))
             
         # Detect discrepancy between reported number of complete and single-copy hits vs actual files
-        if len(fnas) != S:
+        if len(faas) != S:
             discrepancies[assembly] = (S, len(fnas))
             
     

@@ -1,4 +1,8 @@
-# Saccharomycotina taxonomy
+# BUSCO fungal BUSCO_phylogenomics
+
+This project uses several scripts to build a multi-protein file for phylogenomic analysis with IQ-Tree.
+
+Note: this project was created using BUSCO v4
 
 # Preamble
 
@@ -403,3 +407,8 @@ iqtree -s [concatenated].fasta -p [partition].nex -T AUTO -B 1000 --msub nuclear
 Instead of the ultrafast bootstrap, we can substitute `-B 1000` with `--fast`. The `-m MFP` will use the "new ModelFinder" which will try to find the most appropriate substitution model for each partition, out of the models designed for sequences localized in the nuclear genome (option `--msub nuclear`).
 
 If running first with `--fast` to have a first view of the tree, the resulting substitution rates for each partition (`[concatenated].nex.best_scheme.nex`) can be re-used for a second run using `-B 1000` (in which case the `-m MFP` option is not necessary again).
+
+
+## Alternative software
+
+A similar project doing a similar analysis is [here](https://github.com/jamiemcg/BUSCO_phylogenomics)
