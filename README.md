@@ -213,6 +213,8 @@ Three assemblies had issues and could not be processed
 
 # Verify BUSCO results
 
+**Note**: Scripts 3-8 were verified to be compatible with (uncompressed) BUSCO 5.2.2 results
+
 The next script reads the `short_summary` files and compares the number of singe-copy BUSCOs (S) reported there with the actual number of files. It also produces a report of all summaries, [`busco_set_results_summary`](./files/busco_set_results_summary.tsv).
 
 * Script: `3_verify_busco_results.py`
