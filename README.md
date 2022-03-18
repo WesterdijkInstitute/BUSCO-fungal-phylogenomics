@@ -1,4 +1,4 @@
-# BUSCO fungal BUSCO_phylogenomics
+# BUSCO fungal phylogenomics
 
 This project uses several scripts to build a multi-protein file for phylogenomic analysis with IQ-Tree.
 
