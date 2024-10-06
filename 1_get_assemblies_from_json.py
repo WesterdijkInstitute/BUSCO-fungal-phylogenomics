@@ -114,8 +114,8 @@ if __name__ == "__main__":
             sci_name = org["organism_name"]
             infraspecific_names = org.get("infraspecific_names", "")
             if infraspecific_names:
-                strain = org.get("strain", "")
-            tax_id = org.get("tax_id", "")
+                strain = infraspecific_names.get("strain", "")
+            tax_id = str(org.get("tax_id", ""))
 
             # only download accessions from include_set (if present)
             if include_set and asm_ac not in include_set:
