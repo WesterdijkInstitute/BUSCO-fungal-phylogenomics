@@ -51,10 +51,8 @@ def download_accession(acc, tries, outputfolder):
     cmd.append(acc)
     cmd.append("--filename")
     cmd.append(str(zipfilename))
-    cmd.append("--exclude-rna")
-    cmd.append("--exclude-protein")
-    #print(" ".join(cmd))
-
+    # print(" ".join(cmd))
+    
     for n in range(tries):
         proc = subprocess.run(cmd, stderr=STDOUT, encoding="utf-8")
         try:
@@ -104,17 +102,19 @@ if __name__ == "__main__":
     with open(json_file) as f, open(o / "updated_assemblies.tsv", "w") as u:
         j = json.load(f)
 
-        for n, item in enumerate(j["assemblies"]):
+        for n, asm in enumerate(j["reports"]):
             if options.n:
                 if n+1 > options.n:
                     break
 
-            asm = item["assembly"]
+            # asm = item["assembly"]
 
-            asm_ac = asm["assembly_accession"]
-            org = asm["org"]
-            sci_name = org["sci_name"]
-            strain = org.get("strain", "")
+            asm_ac = asm["accession"]
+            org = asm["organism"]
+            sci_name = org["organism_name"]
+            infraspecific_names = org.get("infraspecific_names", "")
+            if infraspecific_names:
+                strain = org.get("strain", "")
             tax_id = org.get("tax_id", "")
 
             # only download accessions from include_set (if present)
